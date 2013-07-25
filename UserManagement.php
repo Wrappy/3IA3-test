@@ -1,35 +1,30 @@
 <?php
-	include 'Database.php';
+	include_once 'Database.php';
 	class UserManagement {
-		function addUser(/*string*/ $userName, /*string*/ $password) {
+		function addUser(/*string*/ $username, /*string*/ $password, /*int*/ $permissionLevel, /*string*/ $name, /*string*/ $location) {
 			
 			//connect to database
-			include 'Credentials.php';
+			include_once 'Credentials.php';
 			$database = new Database();
 			$con = $database->loginDatabase();
 			
 			if (mysqli_connect_errno($con)) {
-				echo "Failed to connect to MySQL: " . mysqli_connect_error();
+				$message = "Failed to connect to MySQL: " . mysqli_connect_error();
 			}
 			
 			//on connection success, add new user
 			else {
 				$hash = new Credentials();
 				$hash = $hash->hashPassword($password);
-				$sql = "INSERT INTO credentials (username, password) VALUES ('$userName','$hash')";
+				$sql = "INSERT INTO users (username, password, location, permissionLevel, fullname ) VALUES ('$username','$hash','$location','$permissionLevel','$name')";
 				
 				if (!mysqli_query($con,$sql))
 				{
-					die('Error: ' . mysqli_error($con));
+					$message = 'Error: ' . mysqli_error($con);
 				}
-				echo "1 record added";
+				$message = "1 record added";
 			}
+			return $message;
 		}
 	}
-	
-	$userName = "testUser";
-	$password = "pass";
-	
-	$addUser = new UserManagement();
-	$addUser->addUser($userName, $password)
 ?>

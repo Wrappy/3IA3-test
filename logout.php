@@ -3,14 +3,10 @@
 <head>
 <meta charset="ISO-8859-1">
 <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+<meta http-equiv="refresh" content="3;url=loginForm.php">
 <title>Login</title>
 </head>
-<body>
-	<form action="login.php" method="post">
-		Username: <input name="username" type="text" id="username"><br>
-		Password: <input name="password" type="password" id="password"><br>
-		<input type="submit"><br>
-		
+<body>		
 		<?php
 				session_start();
 				if (isset($_SESSION['login'])) {
@@ -18,7 +14,7 @@
 					session_destroy();
 				}
 				else {
-					//echo "session has not started";
+					echo "You have not logged in yet!";
 				}
 		?>
 	</form>

@@ -7,7 +7,7 @@
 
 <head>
 <link rel="stylesheet" type="text/css" href="style.css"/>
-  <title>3IA3 feedback </title>	
+  <title>Network Administration</title>	
 </head>
 
 <body>
@@ -21,7 +21,6 @@
 		error_reporting(0);
 		if (isset($_GET['id'])) {
 			session_start();
-			$_SESSION['username'] = "testUser";
 			if (isset($_SESSION['username'])) {
 				echo "Welcome ";
 				echo $_SESSION['username'];
@@ -44,6 +43,7 @@
 				echo $_SESSION['username'];
 				echo '<a href="logout.php">(logout)</a><br>';
 			}
+				
 			echo '<h5>Server Selection</h5>';
 			include_once "ServerManagement.php";
 			$serv = new ServerManagement();
@@ -71,6 +71,7 @@
     		<legend>Personal Information</legend>
     			<p>
     			<?php
+    			include_once "Parse/PortInfo.php";
     			include_once "SSH.php";
     			
     			$ssh = new SSH;
@@ -79,13 +80,62 @@
     			if (isset($_SESSION['login'])) {
 					$username = $_SESSION['username'];
 					if (isset($_GET['id'])) {
+						
 						$serverID = $_GET['id']; //Grabs the server's ID for use in SSH commands (identifies the server to send SSH requests too)
-
 						
 						//Code Block to add a command
-						$input = "uname -a"; //Command you would like to execute
+						$input = "ifconfig | grep eth"; //Command you would like to execute
 						$sshOutput = $ssh->sshStart($serverID, $username, $input); //don't change this, this requests a function to execute ssh commands
-						echo "Version: $sshOutput"; //$sshOutput is the output of the command, this places the output into the html document
+						
+						/*Regular Expression*/
+						
+						# URL that generated this code:
+						# http://txt2re.com/index-php.php3?s=1:%20lo:%20%3CLOOPBACK,UP,LOWER_UP%3E%20mtu%2016436%20qdisc%20noqueue%20state%20UNKNOWN%20%20%20%20%20%20link/loopback%2000:00:00:00:00:00%20brd%2000:00:00:00:00:00%20%20%20%20%20inet%20127.0.0.1/8%20scope%20host%20lo%20%20%20%20%20inet6%20::1/128%20scope%20host%20%20%20%20%20%20%20%20%20valid_lft%20forever%20preferred_lft%20forever%202:%20eth0:%20%3CBROADCAST,MULTICAST,UP,LOWER_UP%3E%20mtu%201500%20qdisc%20pfifo_fast%20state%20UP%20qlen%201000%20%20%20%20%20link/ether%2008:00:27:6f:7a:96%20brd%20ff:ff:ff:ff:ff:ff%20%20%20%20%20inet%20192.168.100.10/24%20brd%20192.168.100.255%20scope%20global%20eth0%20%20%20%20%20inet6%20fe80::a00:27ff:fe6f:7a96/64%20scope%20link%20%20%20%20%20%20%20%20%20valid_lft%20forever%20preferred_lft%20forever&168
+
+						
+						$re1='((?:eth[0-9]+[a-z0-9]*))';	# Alphanum 1
+						
+						if ($c=preg_match_all ("/".$re1."/is", $sshOutput, $matches))
+						/*end Regular Expression*/
+						{
+							echo "<div id=table>";
+							echo "<table>";
+							echo "<tr>";
+							echo "<td>Port ID</td>";
+							echo "<td>IP</td>";
+							echo "<td>Mask</td>";
+							echo "<td>MAC Address</td>";
+							echo "</tr>";
+				
+							for ($i = 0; $i < $c; $i++) {
+								
+								
+								//get all the components of each port
+								$port = new PortInfo();
+
+								$portID = $matches[0][$i];
+								$input = "ifconfig $portID"; //Command you would like to execute
+								$sshOutput = $ssh->sshStart($serverID, $username, $input); //don't change this, this requests a function to execute ssh commands
+								
+								$ip = $port->getIP($sshOutput);
+								$mask = $port->getMask($sshOutput);
+								$mac = $port->getMac($sshOutput);
+								
+								echo "<tr>";
+								echo "<td><a href=\"linuxNetMod.php?id=$serverID&port=$portID\">$portID</a></td>";
+								echo "<td>$ip</td>";
+								echo "<td>$mask</td>";
+								echo "<td>$mac</td>";
+								echo "</tr>";
+							}
+							echo "</table>";
+							echo "</div>";
+						}
+						
+
+						
+
+						
 						echo "<br>"; //new line
 						//End of Code Block
 						
@@ -106,8 +156,7 @@
 
 			</p>
   	</fieldset>
-	<a href="addServer.php">Add a new server</a><br>
-	<a href="newUser.php">Add a new user</a><br>
+
 
 
 </div>	
@@ -115,5 +164,3 @@
 </html>
 
 <!-- Nikolay Krivulin 1130530-->
-
-

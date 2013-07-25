@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -7,7 +8,7 @@
 
 <head>
 <link rel="stylesheet" type="text/css" href="style.css"/>
-  <title>3IA3 feedback </title>	
+<title>3IA3 feedback </title>
 </head>
 
 <body>
@@ -21,12 +22,12 @@
 		error_reporting(0);
 		if (isset($_GET['id'])) {
 			session_start();
-			$_SESSION['username'] = "testUser";
 			if (isset($_SESSION['username'])) {
 				echo "Welcome ";
 				echo $_SESSION['username'];
 				echo '<a href="logout.php">(logout)</a><br>';
 			}
+			
 			$serverId = $_GET['id'];
 			echo "<a href=\"linuxMain.php\">";
 			echo 'Return to server selection</a><br>';
@@ -39,9 +40,9 @@
 		}
 		else {
 			session_start();
-			if (isset($_SESSION['username'])) {
+			if (isset($_SESSION('username'))) {
 				echo "Welcome ";
-				echo $_SESSION['username'];
+				echo $_SESSION('username');
 				echo '<a href="logout.php">(logout)</a><br>';
 			}
 			echo '<h5>Server Selection</h5>';
@@ -75,19 +76,16 @@
     			
     			$ssh = new SSH;
     			session_start();
+    			$sshOutput = "";
     			
     			if (isset($_SESSION['login'])) {
 					$username = $_SESSION['username'];
 					if (isset($_GET['id'])) {
-						$serverID = $_GET['id']; //Grabs the server's ID for use in SSH commands (identifies the server to send SSH requests too)
 
+						$serverID = $_GET['id']; //Grabs the server's ID for use in SSH commands (identifies the server to send SSH requests too)
 						
-						//Code Block to add a command
-						$input = "uname -a"; //Command you would like to execute
-						$sshOutput = $ssh->sshStart($serverID, $username, $input); //don't change this, this requests a function to execute ssh commands
-						echo "Version: $sshOutput"; //$sshOutput is the output of the command, this places the output into the html document
-						echo "<br>"; //new line
-						//End of Code Block
+						$input = "top";
+						echo $ssh->sshStartScreen($serverID, $username, $input);
 						
 						
 					}
@@ -115,5 +113,3 @@
 </html>
 
 <!-- Nikolay Krivulin 1130530-->
-
-

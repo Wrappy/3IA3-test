@@ -60,6 +60,32 @@
 			return ($results);
 		}
 		
+		function hasServerCredentials($username, $serverID) {
+			$database = new Database();
+			$con = $database->loginDatabase();
+				
+			$sql = "SELECT * FROM userpermissions WHERE username='$username' AND serverID='$serverID'";
+			
+			if (!mysqli_query($con,$sql))
+			{
+				$message = 'Error: ' . mysqli_error($con);
+				return false;
+			}
+				
+			//$sql = "SELECT * FROM userpermissions WHERE username='$username' AND serverID='$serverID'";
+				
+			$results = mysqli_query($con,"SELECT * FROM userpermissions WHERE username='$username' AND serverID='$serverID'");
+				
+			$row = mysqli_fetch_array($results);
+			
+			if ($row == $null) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
 		
 	}
 

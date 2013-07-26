@@ -13,10 +13,11 @@ padding-right: 100%;
 float: left;
 }
 
+#ssh {color:white; background-color:black;}
 #menu {width:200px; float:left; background-color:#EEEEEE;}
-#content {margin-left:200px;}
+#content {margin-left:200px; font-size:18px;}
 #header {margin-left:0px; padding-right: 100%; float: left;}
 body {background-image:url('website-background.jpg');}
-p {font-size:20px;font-weight:bold;}
+p {font-size:20px;text-align:left}
 
 <!-- Nikolay Krivulin 1130530-->
